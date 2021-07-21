@@ -1,0 +1,114 @@
+server:
+  port: ${SERVER_PORT:8765}
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: billing
+#          uri: lb://BOOKSTORE-BILLING-SERVICE
+#          filters:
+#            - PrefixPath=/app
+#          predicates:
+#            - Path=/billing/**
+#        - id: catalog
+#          uri: lb://BOOKSTORE-CATALOG-SERVICE
+#          filters:
+#            - PrefixPath=/app
+#          predicates:
+#            - Path=/catalog/**
+#        - id: account
+#          uri: lb://BOOKSTORE-ACCOUNT-SERVICE
+#          filters:
+#            - PrefixPath=/app
+#          predicates:
+#            - Path=/account/**
+#        - id: order
+#          uri: lb://BOOKSTORE-ORDER-SERVICE
+#          filters:
+#            - PrefixPath=/app
+#          predicates:
+#            - Path=/order/**
+#        - id: payment
+#          uri: lb://BOOKSTORE-PAYMENT-SERVICE
+#          filters:
+#            - PrefixPath=/app
+#          predicates:
+#            - Path=/payment/**
+#      globalcors:
+#        cors-configurations:
+#          "[/**]":
+#            allowedOrigins: "http://localhost:3000"
+#            allowedHeaders: "*"
+#            allowCredentials: true
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - HEAD
+#              - OPTIONS
+#              - PATCH
+#
+
+#  zipkin:
+#    base-url: http://${ZIPKIN_HOST:localhost:9411}
+#    enabled: true
+#    service:
+#      name: bookstore-api-gateway-service
+#    sleuth:
+#      enabled: true
+#      sampler:
+#        probability: 1.0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+zuul:
+  ignoredServices: "*"
+  sensitiveHeaders:
+  ignoredHeaders: Access-Control-Allow-Credentials,Access-Control-Allow-Origin,Access-Control-Allow-Headers
+  host:
+    socket-timeout-millis: 30000
+    connect-timeout-millis: 30000
+  prefix: /api
+  routes:
+    billing:
+      path: /billing/**
+      serviceId: bookstore-billing-service
+    catalog:
+      path: /catalog/**
+      serviceId: bookstore-catalog-service
+    account:
+      path: /account/**
+      serviceId: bookstore-account-service
+    order:
+      path: /order/**
+      serviceId: bookstore-order-service
+    payment:
+      path: /payment/**
+      serviceId: bookstore-payment-service
+#  ribbon:
+#    eager-load:
+#      enabled: true
+#  ribbon-isolation-strategy: THREAD
+#
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 60000
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+        # Disable Hystrix timeout globally (for all services)
+        #hystrix.command.default.execution.timeout.enabled: false
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 60000
